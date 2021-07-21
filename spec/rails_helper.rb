@@ -1,10 +1,29 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
+require 'database_cleaner'
 ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../config/environment', __dir__)
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 require 'rspec/rails'
+require 'factory_bot_rails'
+
+# FactoryBot setup
+RSpec.configure do |config|
+  config.include FactoryBot::Syntax::Methods
+end
+
+def build_attributes(*args)
+  FactoryBot.build(*args).attributes.delete_if do |k, _v|
+    %w(id created_at updated_at).member?(k)
+  end
+end
+
+# JSON helper
+def json
+  JSON.parse(response.body)
+end
+
 # Add additional requires below this line. Rails is not loaded until this point!
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
