@@ -3,6 +3,7 @@ module Carts
     class All
       def self.current_user_cart(params)
         carts = Cart.includes(:variant, product: [:shop])
+        carts = by_status(carts, params)
         carts = by_user(carts, params)
         carts = order_by_params(carts, params)
 
@@ -64,6 +65,14 @@ module Carts
       def self.by_user(carts, params)
         if params[:user_id].present?
           carts = carts.where(user_id: params[:user_id])
+        end
+
+        return carts
+      end
+
+      def self.by_status(carts, params)
+        if params[:status].present?
+          carts = carts.where(status: 'active')
         end
 
         return carts

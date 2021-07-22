@@ -161,4 +161,97 @@ RSpec.describe "Api::V1::Carts", type: :request do
       end
     end
   end
+
+  describe "PATCH /api/v1/cart/{:id}" do
+    context 'with valid params' do
+      context 'update quantity' do
+        before do
+          user = create(:user)
+          token = encode_token(user)
+          headers = {Authorization: "Bearer #{token}"}
+
+          shop = create(:shop)
+          product = create(:product, shop_id: shop.id)
+          variant = create(:product_variant, product_id: product.id, stock: 5)
+          @cart = create(:cart, product_id: product.id, variant_id: variant.id, user_id: user.id, quantity: 1)
+
+          params = {quantity: 2}
+
+          patch api_v1_cart_path(@cart.id), params: params, headers: headers
+        end
+
+        it 'status should be 200' do
+          expect(response.status).to eq(200)
+        end
+
+        it 'should update the quantity' do
+          @cart.reload
+          expect(@cart.quantity).to eq(2)
+        end
+      end
+
+      context 'delete product from cart' do
+        before do
+          user = create(:user)
+          token = encode_token(user)
+          headers = {Authorization: "Bearer #{token}"}
+
+          shop = create(:shop)
+          product = create(:product, shop_id: shop.id)
+          variant = create(:product_variant, product_id: product.id, stock: 5)
+          @cart = create(:cart, product_id: product.id, variant_id: variant.id, user_id: user.id, quantity: 1)
+
+          params = {status: 'deleted'}
+
+          patch api_v1_cart_path(@cart.id), params: params, headers: headers
+        end
+
+        it 'status should be 200' do
+          expect(response.status).to eq(200)
+        end
+
+        it 'should update the quantity' do
+          @cart.reload
+          expect(@cart.status).to eq('deleted')
+        end
+      end
+    end
+
+    context 'with invalid params' do
+      context 'update quantity more than product stock' do
+        before do
+          user = create(:user)
+          token = encode_token(user)
+          headers = {Authorization: "Bearer #{token}"}
+
+          shop = create(:shop)
+          product = create(:product, shop_id: shop.id)
+          variant = create(:product_variant, product_id: product.id, stock: 5)
+          @cart = create(:cart, product_id: product.id, variant_id: variant.id, user_id: user.id, quantity: 1)
+
+          params = {quantity: 6}
+
+          patch api_v1_cart_path(@cart.id), params: params, headers: headers
+        end
+
+        it 'status should be 422' do
+          expect(response.status).to eq(422)
+        end
+
+        it 'should not update the quantity' do
+          @cart.reload
+          expect(@cart.quantity).to eq(1)
+        end
+
+        it 'should return error message' do
+          expectation = {
+            success: false,
+            message: "Your selected item is unavailable."
+          }.with_indifferent_access
+
+          expect(json).to eq(expectation)
+        end
+      end
+    end
+  end
 end
