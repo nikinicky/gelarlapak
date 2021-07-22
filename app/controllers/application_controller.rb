@@ -14,4 +14,42 @@ class ApplicationController < ActionController::API
       Rails.application.credentials[Rails.env.to_sym][:jwt_algorithm]
     )
   end
+
+  def authenticate_user
+    authenticate_token || render_unauthorized
+  end
+
+  def render_unauthorized
+    render json: {message: 'Please login to access this page.'}, status: :unauthorized
+  end
+
+  def authenticate_token
+    if decoded_token
+      user = User.find_by(id: decoded_token.first['user_id'])
+      @current_user = user
+    else
+      render_unauthorized
+    end
+  end
+
+  private
+
+  def auth_header
+    request.headers['Authorization']
+  end
+
+  def decoded_token
+    return nil unless auth_header
+
+    token = auth_header.split(' ')[1]
+
+    begin
+      JWT.decode(token, Rails.application.credentials[Rails.env.to_sym][:jwt_secret_key], true, {algorithm: Rails.application.credentials[Rails.env.to_sym][:jwt_algorithm]})
+    rescue JWT::ExpiredSignature
+      puts 'token expired'
+      nil
+    rescue JWT::DecodeError
+      nil
+    end
+  end
 end

@@ -14,7 +14,7 @@ FactoryBot.define do
           name: Faker::Commerce.color, 
           price_cents: (Faker::Commerce.price * 100), 
           price_currency: 'USD', 
-          stock: rand(0...5),
+          stock: rand(1...5),
           status: 'active'
         )
       end

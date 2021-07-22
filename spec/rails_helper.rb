@@ -24,6 +24,21 @@ def json
   JSON.parse(response.body)
 end
 
+# For encode JWT token
+def encode_token(user, expiration=nil)
+  expiration ||= Rails.application.credentials[Rails.env.to_sym][:jwt_expiration_hours]
+
+  payload = {
+    user_id: user.id,
+    exp: expiration.to_i.hours.from_now.to_i
+  }
+
+  JWT.encode(
+    payload, Rails.application.credentials[Rails.env.to_sym][:jwt_secret_key], 
+    Rails.application.credentials[Rails.env.to_sym][:jwt_algorithm]
+  )
+end
+
 # Add additional requires below this line. Rails is not loaded until this point!
 
 # Requires supporting ruby files with custom matchers and macros, etc, in

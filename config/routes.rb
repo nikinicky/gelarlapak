@@ -7,6 +7,7 @@ Rails.application.routes.draw do
       post '/login', to: 'sessions#login'
 
       resources 'products', only: [:index, :show]
+      resources 'carts', except: [:destroy]
     end
   end
 end
