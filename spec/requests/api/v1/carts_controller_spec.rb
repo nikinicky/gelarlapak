@@ -67,4 +67,98 @@ RSpec.describe "Api::V1::Carts", type: :request do
       end
     end
   end
+
+  describe "GET /api/v1/carts" do
+    context 'with valid params' do
+      before do
+        user = create(:user)
+        token = encode_token(user)
+        headers = {Authorization: "Bearer #{token}"}
+
+        @shop_b = create(:shop, name: 'shop 2')
+        @product_b1 = create(:product, shop_id: @shop_b.id, name: 'product b1')
+        @variant_b1_b = create(:product_variant, product_id: @product_b1.id, stock: 5, name: 'variant b')
+        @cart_b1_b = create(:cart, product_id: @product_b1.id, variant_id: @variant_b1_b.id, user_id: user.id)
+
+        @shop_a = create(:shop, name: 'shop 1')
+        @product_a2 = create(:product, shop_id: @shop_a.id, name: 'product a2')
+        @variant_a2_c = create(:product_variant, product_id: @product_a2.id, stock: 5, name: 'variant c')
+        @cart_a2_c = create(:cart, product_id: @product_a2.id, variant_id: @variant_a2_c.id, user_id: user.id)
+
+        @product_a1 = create(:product, shop_id: @shop_a.id, name: 'product a1')
+        @variant_a1_c = create(:product_variant, product_id: @product_a1.id, stock: 5, name: 'variant c')
+        @variant_a1_a = create(:product_variant, product_id: @product_a1.id, stock: 5, name: 'variant a')
+        @cart_a1_c = create(:cart, product_id: @product_a1.id, variant_id: @variant_a1_c.id, user_id: user.id)
+        @cart_a1_a = create(:cart, product_id: @product_a1.id, variant_id: @variant_a1_a.id, user_id: user.id)
+
+        get api_v1_carts_path, headers: headers
+      end
+
+      it 'status should be 200' do
+        expect(response.status).to eq(200)
+      end
+
+      it 'should return cart data' do
+        cart_shop_a = [@cart_a1_a, @cart_a1_c, @cart_a2_c]
+
+        shop = @cart_a1_a.product.shop
+        expectation = {
+          carts: [
+            {
+              shop_info: {
+                id: shop.id,
+                name: shop.name,
+                address: shop.address,
+                shop_type: shop.shop_type
+              }
+            }
+          ]
+        }
+        products = []
+
+        cart_shop_a.each do |cart|
+          products << {
+            cart_id: cart.id,
+            product_id: cart.product.id,
+            variant_id: cart.variant_id,
+            name: cart.product.name,
+            variant: cart.variant.name,
+            price: cart.variant.price.to_f,
+            formatted_price: "$#{cart.variant.price}",
+            quantity: cart.quantity,
+            stock: cart.variant.stock,
+            note: cart.description
+          }
+        end
+
+        expectation[:carts].first[:products] = products
+
+        shop = @cart_b1_b.product.shop
+        expectation[:carts] << {
+          shop_info: {
+            id: shop.id,
+            name: shop.name,
+            address: shop.address,
+            shop_type: shop.shop_type
+          },
+          products: [
+            {
+              cart_id: @cart_b1_b.id,
+              product_id: @cart_b1_b.product.id,
+              variant_id: @cart_b1_b.variant_id,
+              name: @cart_b1_b.product.name,
+              variant: @cart_b1_b.variant.name,
+              price: @cart_b1_b.variant.price.to_f,
+              formatted_price: "$#{@cart_b1_b.variant.price}",
+              quantity: @cart_b1_b.quantity,
+              stock: @cart_b1_b.variant.stock,
+              note: @cart_b1_b.description
+            }
+          ]
+        }
+
+        expect(json).to eq(expectation.with_indifferent_access)
+      end
+    end
+  end
 end

@@ -16,6 +16,10 @@ class Api::V1::CartsController < ApplicationController
     end
   end
 
+  def index
+    status, @carts = Carts::Queries::All.formatted_cart(cart_params)
+  end
+
   private
 
   def cart_params
