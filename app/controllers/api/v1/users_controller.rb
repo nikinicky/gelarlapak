@@ -6,12 +6,12 @@ class Api::V1::UsersController < ApplicationController
       render json: {
         success: false, 
         message: "Email is already registered, please enter another email address."
-      }, status: :unprocessable_entity
+      }, status: :unprocessable_entity and return
     elsif status == :unprocessable_entity
       render json: {
         success: false, 
         message: @user.errors.full_messages.first
-      }, status: :unprocessable_entity
+      }, status: :unprocessable_entity and return
     end
   end
 

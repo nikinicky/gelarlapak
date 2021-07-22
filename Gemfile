@@ -11,6 +11,7 @@ gem 'bcrypt', '~> 3.1.7'
 gem 'pg'
 gem 'devise'
 gem 'jwt'
+gem 'money-rails'
 
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'
