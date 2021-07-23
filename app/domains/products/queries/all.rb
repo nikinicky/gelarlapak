@@ -21,7 +21,7 @@ module Products
 
       def self.by_product_name(products, params)
         if params[:product_name].present?
-          products = products.where("LOWER(name) ILIKE '%#{params[:product_name]}%'")
+          products = products.where("LOWER(products.name) ILIKE '%#{params[:product_name]}%'")
         end
 
         return products
