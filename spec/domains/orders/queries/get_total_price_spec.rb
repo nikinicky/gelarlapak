@@ -32,7 +32,7 @@ RSpec.describe "Orders::Queries::GetTotalPrice", type: :request do
         price2 = @product_a.variants.first.price.to_f
         expectation = price1 + price2
 
-        expect(@total_price).to eq(expectation)
+        expect(@total_price).to eq(expectation.round(2))
       end
     end
   end
