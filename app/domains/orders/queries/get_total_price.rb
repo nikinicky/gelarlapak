@@ -8,7 +8,7 @@ module Orders
           total_price += sub_total_per_variant(order, snapshot.variant)
         end
 
-        return :ok, total_price
+        return :ok, total_price.round(2)
       end
 
       def self.sub_total_per_variant(order, variant)
@@ -16,7 +16,7 @@ module Orders
 
         sub_total = snapshot.quantity * snapshot.price.to_f
 
-        return sub_total
+        return sub_total.round(2)
       end
     end
   end

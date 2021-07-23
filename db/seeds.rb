@@ -8,7 +8,7 @@
     status: 'active'
   )
 end
-  
+
 
 # Seed products
 shops = Shop.all
@@ -32,4 +32,39 @@ shops = Shop.all
       status: 'active'
     )
   end
+end
+
+# Seed users
+User.create(
+  name: Faker::Name.name,
+  email: 'user@example.com',
+  password: 'password',
+  status: 'active'
+)
+
+User.create(
+  name: Faker::Name.name,
+  email: 'user2@example.com',
+  password: 'password',
+  status: 'active'
+)
+
+# Seed carts
+users = User.where(email: ['user@example.com', 'user2@example.com'])
+products = Product.all
+
+15.times do
+  product = products.sample
+  shop = product.shop
+  variant = product.variants.sample
+
+  Cart.create(
+    product_id: product.id,
+    variant_id: variant.id,
+    quantity: rand(1...5),
+    description: Faker::Lorem.sentence,
+    status: ['active', 'processed'].sample,
+    user_id: users.sample.id,
+    shop_id: shop.id
+  )
 end
