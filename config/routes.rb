@@ -1,6 +1,4 @@
 Rails.application.routes.draw do
-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
-
   namespace :api do
     namespace :v1 do
       post '/register', to: 'users#register'
@@ -8,6 +6,7 @@ Rails.application.routes.draw do
 
       resources 'products', only: [:index, :show]
       resources 'carts', except: [:destroy]
+      resources 'orders', only: [:index, :create]
     end
   end
 end
