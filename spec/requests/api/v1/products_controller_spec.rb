@@ -125,5 +125,46 @@ RSpec.describe "Api::V1::ProductsControllers", type: :request do
         expect(json).to eq(expectation)
       end
     end
+
+    context 'filter by product name' do
+      before do
+        shop_bronze = create(:shop, shop_type: Shop::BRONZE)
+        create_list(:product, 2, shop_id: shop_bronze.id)
+
+        product_name = 'Gantungan Kunci Spongebob-Patrick Lucu'
+        shop_gold = create(:shop, shop_type: Shop::GOLD)
+        create_list(:product, 3, shop_id: shop_gold.id)
+        @product = create(:product, shop_id: shop_gold.id, name: product_name)
+
+        get api_v1_products_path, params: {product_name: 'sponge'}
+      end
+
+      it 'status should be 200' do
+        expect(response.status).to eq(200)
+      end
+
+      it 'should return product data' do
+        products = [
+          {
+            id: @product.id,
+            name: @product.name,
+            description: @product.description,
+            average_rating: @product.average_rating,
+            status: @product.status,
+            formatted_price: "$#{(@product.variants.minimum(:price_cents)/100)}",
+            shop_information: {
+              id: @product.shop.id,
+              address: @product.shop.address,
+              description: @product.shop.description,
+              shop_type: @product.shop.shop_type
+            }
+          }
+        ]
+
+        expectation = {products: products}.with_indifferent_access
+
+        expect(json).to eq(expectation)
+      end
+    end
   end
 end

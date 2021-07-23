@@ -38,5 +38,28 @@ RSpec.describe "Products::Queries::All", type: :request do
         expect(@products.size).to eq(3)
       end
     end
+
+    context 'filter by product name' do
+      before do
+        @product_name = 'Gantungan Kunci Doraemon'
+        shop_bronze = create(:shop, shop_type: Shop::BRONZE)
+        create_list(:product, 3, shop_id: shop_bronze.id)
+        create(:product, shop_id: shop_bronze.id, name: @product_name)
+
+        shop_gold = create(:shop, shop_type: Shop::GOLD)
+        create_list(:product, 3, shop_id: shop_gold.id)
+
+        @status, @products = Products::Queries::All.run({product_name: 'doraemon'})
+      end
+
+      it 'status should be :ok' do
+        expect(@status).to eq(:ok)
+      end
+
+      it "should only return product with name is like 'doraemon'" do
+        expect(@products.size).to eq(1)
+        expect(@products.first.name).to eq(@product_name)
+      end
+    end
   end
 end

@@ -16,6 +16,6 @@ class Api::V1::ProductsController < ApplicationController
   private
 
   def product_params
-    params.permit(:shop_type)
+    params.permit(:shop_type, :product_name)
   end
 end
