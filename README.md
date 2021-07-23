@@ -1,5 +1,19 @@
 # gelarlapak
 
+## Table of Content
+- [Prequisities](https://github.com/nikinicky/gelarlapak#prequisities)
+- [Unit Test](https://github.com/nikinicky/gelarlapak#unit-test-rspec)
+- [Data Seed](https://github.com/nikinicky/gelarlapak#data-seeds)
+- [Endpoint List](https://github.com/nikinicky/gelarlapak#endpoint)
+  - [Register](https://github.com/nikinicky/gelarlapak#register)
+  - [Login](https://github.com/nikinicky/gelarlapak#login)
+  - [Get Product List](https://github.com/nikinicky/gelarlapak#get-product-list)
+  - [Get Product Detail](https://github.com/nikinicky/gelarlapak#get-product-detail)
+  - [Get User Cart](https://github.com/nikinicky/gelarlapak#get-user-cart)
+  - [Update User Cart](https://github.com/nikinicky/gelarlapak#update-cart)
+  - [Create Order](https://github.com/nikinicky/gelarlapak#create-order)
+  - [Order List](https://github.com/nikinicky/gelarlapak#order-list)
+
 ## Prequisities
 - Ruby 2.3.1
 - Rails 5.2.6
@@ -12,6 +26,7 @@ Run `rake db:seed` to populate some data. You can login with existing user, with
 
 
 ## Endpoint
+
 ### Register
 Endpoint: `{{host}}/api/v1/register`.
 
